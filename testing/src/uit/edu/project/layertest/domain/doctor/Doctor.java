@@ -10,7 +10,7 @@ import java.io.Serializable;
 public class Doctor implements Serializable {
 
     private String name;
-    private String confee;
+    private Double confee;
     private String contactNo;
     private String speciality;
     private String address;
@@ -35,11 +35,11 @@ public class Doctor implements Serializable {
         return contactNo;
     }
 
-    public void setConfee(String confee) {
+    public void setConfee(Double confee) {
         this.confee = confee;
     }
 
-    public String getConfee() {
+    public Double getConfee() {
         return confee;
     }
 

@@ -48,7 +48,7 @@ public class DrInsertBean implements DoctorInsert {
 
 		String emptyDataMsg = "";
 		String invalidDataMsg = "";
-		String validatorMsg=  "";
+		String validatorMsg = "";
 
 		name = doctor.getName();
 		speciality = doctor.getSpeciality();
@@ -61,30 +61,31 @@ public class DrInsertBean implements DoctorInsert {
 			emptyDataMsg = emptyDataMsg + "name is empty!! please enter this requied fields\n";
 		if (speciality.isEmpty())
 			emptyDataMsg = emptyDataMsg + "speciality is empty!! please enter this requied fields\n";
-		if (confee.isEmpty())
+		if (confee == 0)
 			emptyDataMsg = emptyDataMsg + "consulting fee is empty!! please enter this requied fields\n";
 		if (contact.isEmpty())
 			emptyDataMsg = emptyDataMsg + "contact is empty!! please enter this requied fields\n";
 		if (address.isEmpty())
 			emptyDataMsg = emptyDataMsg + "address is empty!! please enter this requied fields\n";
 
+		invalidDataMsg = invalidDataMsg + dataTypeValidator(name, "invalid format for name\n");
+		invalidDataMsg = invalidDataMsg + dataTypeValidator(speciality, "invalid format for speciality\n");
+		invalidDataMsg = invalidDataMsg + dataTypeValidator(address, "invalid format for address\n");
+
+		if (!(confee instanceof Double))
+			invalidDataMsg = invalidDataMsg + dataTypeValidator(name, "invalid format for name\n");
 		
-		invalidDataMsg = invalidDataMsg + dataTypeValidator(name,"invalid format for name\n");
-		invalidDataMsg = invalidDataMsg + dataTypeValidator(speciality,"invalid format for speciality\n");
-		invalidDataMsg = invalidDataMsg + dataTypeValidator(address,"invalid format for address\n");
-		
-		
+		invalidDataMsg=invalidDataMsg+phoneNumberValidator(contact);
+
 		validatorMsg = emptyDataMsg + invalidDataMsg;
-		
+
 		return validatorMsg;
 
 	}
 
-	
 	public String dataTypeValidator(String value, String msg) {
 		String errMsg = "";
-	
-		 
+
 		try {
 			String regxForName = "^[a-zA-Z \\s]{1,}[\\.]{0,1}[a-zA-Z0-9 \\s]{0,}$";
 			Pattern pattern = Pattern.compile(regxForName, Pattern.CASE_INSENSITIVE);
@@ -100,32 +101,23 @@ public class DrInsertBean implements DoctorInsert {
 		System.out.println(errMsg);
 		return errMsg;
 	}
-	
-	
-	@Override
-	public void drDataTypeValidate(Doctor doctor) {
 
-		String invilidDataTypes = "";
-		name = doctor.getName();
-		speciality = doctor.getSpeciality();
-		confee = doctor.getConfee();
-		contact = doctor.getContactNo();
-		address = doctor.getAddress();
+	public String phoneNumberValidator(String phone) {
 
-		try {
-			String regxForName = "^[a-zA-Z \\s]{1,}[\\.]{0,1}[a-zA-Z0-9 \\s]{0,}$";
-			Pattern pattern = Pattern.compile(regxForName, Pattern.CASE_INSENSITIVE);
-			Matcher matcher = pattern.matcher(name);
-			boolean matchForName = matcher.find();
-			if (matchForName == false) {
-				invilidDataTypes = invilidDataTypes + "invalid name!";
-				JOptionPane.showMessageDialog(null, invilidDataTypes);
+		String phoneValidation="";
+		
+			if (phone.length() != 9) {
+				phoneValidation = phoneValidation + "the length of phone number is unusual\n";
+
 			}
 
-		} catch (Exception exp) {
-			JOptionPane.showMessageDialog(null, "invalid name!");
-		}
+			
+			//phone number fomat for MM phone operator
+			if (phone.charAt(0) != '7' && phone.charAt(0) != '9' && phone.charAt(0) != '4') {
+				phoneValidation = phoneValidation + "invalid phone number fomat\n";
+			}
 
+		return phoneValidation;
 	}
 
 	@Override
@@ -139,13 +131,14 @@ public class DrInsertBean implements DoctorInsert {
 		// 3. Done
 		DoctorRepository doctorRepository = new DoctorJDBCRepository();
 		doctorRepository.save(newDoctor);
+		
 
 	}
 
 	// variable declaration
 	private String name;
 	private String speciality;
-	private String confee;
+	private Double confee = 0.0;
 	private String contact;
 	private String address;
 	// end

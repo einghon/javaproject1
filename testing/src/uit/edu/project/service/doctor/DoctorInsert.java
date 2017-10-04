@@ -18,5 +18,5 @@ public interface DoctorInsert {
 
     public void addNewDoctor(Doctor newDoctor);
     public String drDataIsEmpty(Doctor doctor);
-    public void drDataTypeValidate(Doctor doctor);
+	public String dataTypeValidator(String value, String msg);
 }

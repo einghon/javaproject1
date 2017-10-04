@@ -27,128 +27,126 @@ import uit.edu.project.layertest.UISwing.doctor.ViewDrFrame;
  * @param <doctorlist>
  */
 public class DoctorJDBCRepository<doctorlist> implements DoctorRepository {
- 
+
 	ResultSet rs;
 	Statement stmt;
-	
-    private static final String INSERT_DOCTOR = "INSERT INTO doctorrecord (name, speciality, consfee,contact,address) VALUES (?,?,?,?,?)";
-    private static final String SELECT_DOCTOR="Select * from doctorrecord";
 
-   
-    
+	private static final String INSERT_DOCTOR = "INSERT INTO doctorrecord (name, speciality, consfee,contact,address) VALUES (?,?,?,?,?)";
+	private static final String SELECT_DOCTOR = "Select * from doctorrecord";
 
-    @Override
-    public void save(Doctor doctor) {
+	@Override
+	public void save(Doctor doctor) {
 
-        Connection conn = null;
-        PreparedStatement pstm = null;
+		Connection conn = null;
+		PreparedStatement pstm = null;
 
-        try {
+		try {
 
-            conn = ConnectionPoolManager.getConnection();
-            conn.setAutoCommit(false);
+			conn = ConnectionPoolManager.getConnection();
+			conn.setAutoCommit(false);
 
-            pstm = conn.prepareStatement(INSERT_DOCTOR);
+			pstm = conn.prepareStatement(INSERT_DOCTOR);
 
-            pstm.setString(1, doctor.getName());
-            pstm.setString(2, doctor.getSpeciality());
-            pstm.setString(3, doctor.getConfee());
-            pstm.setString(4, doctor.getContactNo());
-            pstm.setString(5, doctor.getAddress());
+			pstm.setString(1, doctor.getName());
+			pstm.setString(2, doctor.getSpeciality());
+			pstm.setDouble(3, doctor.getConfee());
+			pstm.setString(4, doctor.getContactNo());
+			pstm.setString(5, doctor.getAddress());
 
-            pstm.execute();
+			pstm.execute();
 
-            conn.commit();
+			conn.commit();
 
-        } catch (SQLException ex) {
-            Logger.getLogger(DoctorJDBCRepository.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (SQLException ex) {
+			Logger.getLogger(DoctorJDBCRepository.class.getName()).log(Level.SEVERE, null, ex);
 
-            if (conn != null) {
-                try {
-                    conn.rollback();
-                } catch (SQLException ex1) {
-                    Logger.getLogger(DoctorJDBCRepository.class.getName()).log(Level.SEVERE, null, ex1);
-                }
-            }
-
-        } finally {
-            if (pstm != null) {
-                try {
-                    pstm.close();
-                } catch (SQLException ex) {
-                    // Do nothing.
-                }
-            }
-            if (conn != null) {
-                try {
-                    conn.setAutoCommit(true);
-                } catch (SQLException ex) {
-                    Logger.getLogger(DoctorJDBCRepository.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-    }
-    
-
-    @Override
-    public List<Doctor> find(Doctor doctorExample) {
-        return null;
-    }
-    @Override
-    public  List<Doctor> select_dr() {
-    	Connection conn1=null;
-    	PreparedStatement pstm1=null;
-    	try{
-    		 conn1 = ConnectionPoolManager.getConnection();
-             conn1.setAutoCommit(false);
-    	
-             pstm1 = conn1.prepareStatement(SELECT_DOCTOR);
-             rs=pstm1.executeQuery(SELECT_DOCTOR);
-             if(rs!=null)
-             {  while(rs.next()){
-            	 Doctor doctor=new Doctor();
-            	 doctor.setName(rs.getString(1));
- 				doctor.setSpeciality(rs.getString(2));
- 				doctor.setConfee(rs.getString(2));
- 				doctor.setAddress(rs.getString(3));
- 				doctor.setContactNo(rs.getString(4));
- 				doctorList.add(doctor);
-    	
-			
+			if (conn != null) {
+				try {
+					conn.rollback();
+				} catch (SQLException ex1) {
+					Logger.getLogger(DoctorJDBCRepository.class.getName()).log(Level.SEVERE, null, ex1);
 				}
-             return doctorList;}
-			
-			else return null;
-    	 }
-    	 catch (SQLException ex) {
-             Logger.getLogger(DoctorJDBCRepository.class.getName()).log(Level.SEVERE, null, ex);
+			}
 
-             if (conn1 != null) {
-                 try {
-                     conn1.rollback();
-                 } catch (SQLException ex1) {
-                     Logger.getLogger(DoctorJDBCRepository.class.getName()).log(Level.SEVERE, null, ex1);
-                 }
-             }
+		} finally {
+			if (pstm != null) {
+				try {
+					pstm.close();
+				} catch (SQLException ex) {
+					// Do nothing.
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.setAutoCommit(true);
+				} catch (SQLException ex) {
+					Logger.getLogger(DoctorJDBCRepository.class.getName()).log(Level.SEVERE, null, ex);
+				}
+			}
+		}
+	}
 
-         } finally {
-             if (pstm1 != null) {
-                 try {
-                     pstm1.close();
-                 } catch (SQLException ex) {
-                     // Do nothing.
-                 }
-             }
-             if (conn1 != null) {
-                 try {
-                     conn1.setAutoCommit(true);
-                 } catch (SQLException ex) {
-                     Logger.getLogger(DoctorJDBCRepository.class.getName()).log(Level.SEVERE, null, ex);
-                 }
-             }
-         }
+	@Override
+	public List<Doctor> find(Doctor doctorExample) {
+		return null;
+	}
+
+	@Override
+	public List<Doctor> select_dr() {
+		Connection conn1 = null;
+		PreparedStatement pstm1 = null;
+		try {
+			conn1 = ConnectionPoolManager.getConnection();
+			conn1.setAutoCommit(false);
+
+			pstm1 = conn1.prepareStatement(SELECT_DOCTOR);
+			rs = pstm1.executeQuery(SELECT_DOCTOR);
+			if (rs != null) {
+				while (rs.next()) {
+					Doctor doctor = new Doctor();
+					doctor.setName(rs.getString(1));
+					doctor.setSpeciality(rs.getString(2));
+					doctor.setConfee(Double.parseDouble(rs.getString(3)));
+					doctor.setAddress(rs.getString(4));
+					doctor.setContactNo(rs.getString(5));
+					doctorList.add(doctor);
+
+				}
+				return doctorList;
+			}
+
+			else
+				return null;
+		} catch (SQLException ex) {
+			Logger.getLogger(DoctorJDBCRepository.class.getName()).log(Level.SEVERE, null, ex);
+
+			if (conn1 != null) {
+				try {
+					conn1.rollback();
+				} catch (SQLException ex1) {
+					Logger.getLogger(DoctorJDBCRepository.class.getName()).log(Level.SEVERE, null, ex1);
+				}
+			}
+
+		} finally {
+			if (pstm1 != null) {
+				try {
+					pstm1.close();
+				} catch (SQLException ex) {
+					// Do nothing.
+				}
+			}
+			if (conn1 != null) {
+				try {
+					conn1.setAutoCommit(true);
+				} catch (SQLException ex) {
+					Logger.getLogger(DoctorJDBCRepository.class.getName()).log(Level.SEVERE, null, ex);
+				}
+			}
+		}
 		return doctorList;
-             }
-    //array list declaration
-    ArrayList<Doctor> doctorList=new ArrayList<Doctor>();
+	}
+
+	// array list declaration
+	ArrayList<Doctor> doctorList = new ArrayList<Doctor>();
 }

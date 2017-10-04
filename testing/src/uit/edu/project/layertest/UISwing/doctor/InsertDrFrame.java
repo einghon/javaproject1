@@ -130,13 +130,18 @@ public class InsertDrFrame extends javax.swing.JInternalFrame {
 		Doctor newDoctor = new Doctor();
 		newDoctor.setContactNo(this.txtContactNo.getText());
 		newDoctor.setName(this.txtName.getText());
-		newDoctor.setConfee(this.txtConfee.getText());
-		newDoctor.setAddress(this.txtAddress.getText());
+	try{
+		newDoctor.setConfee(Double.parseDouble(this.txtConfee.getText())); // to change
+	}
+	catch (NumberFormatException e){
+		newDoctor.setConfee(0.0);
+	}
+	 newDoctor.setAddress(this.txtAddress.getText());
 		newDoctor.setSpeciality(this.txtSpeciality.getText());
 
 		strDataEmptyErrMsg = doctorService.drDataIsEmpty(newDoctor);
 
-		if (strDataEmptyErrMsg != "") {
+		if (!strDataEmptyErrMsg.isEmpty()) {
 			JOptionPane.showMessageDialog(null, strDataEmptyErrMsg, "error", JOptionPane.ERROR_MESSAGE);
 			// txtName.setText("");
 			return;
