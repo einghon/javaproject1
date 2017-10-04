@@ -1,0 +1,153 @@
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package uit.edu.project.service.doctor.implementation;
+
+import uit.edu.project.layertest.domain.doctor.Doctor;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.lang.reflect.Array;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.swing.JOptionPane;
+
+import uit.edu.project.infrastructure.DoctorRepository;
+import uit.edu.project.infrastructure.jdbc.DoctorJDBCRepository;
+import uit.edu.project.service.doctor.DoctorInsert;
+import uit.edu.project.layertest.domain.doctor.*;
+import uit.edu.project.layertest.UISwing.doctor.*;
+
+/**
+ *
+ * @author thawaye
+ */
+public class DrInsertBean implements DoctorInsert {
+	/*
+	 * name.addActionListener(new ActionListener(){ public void
+	 * actionPerformed(ActionEvent e){ String txt=name.getText();
+	 * if(name.getText().isEmpty()){ JOptionPane.showMessageDialog(null,
+	 * "Please fill all required field!","error",JOptionPane.ERROR_MESSAGE);
+	 * name.setText(""); name.requestFocus(); } else{ try{ String
+	 * regx="^[a-zA-Z \\s]{1,}[\\.]{0,1}[a-zA-Z0-9 \\s]{0,}$"; Pattern
+	 * pattern=Pattern.compile(regx,Pattern.CASE_INSENSITIVE); Matcher
+	 * matcher=pattern.matcher(txt); boolean m=matcher.find(); if(m==false){
+	 * JOptionPane.showMessageDialog(null, "invalid name!"); name.setText(" ");
+	 * name.requestFocus(); } else{ com.requestFocus(); //confee.requestFocus();
+	 * //com.setSelectedIndex(1); } // confee.requestFocus();
+	 * 
+	 * } catch(Exception exp){ JOptionPane.showMessageDialog(null,
+	 * "invalid name!"); } } } });
+	 */
+	@Override
+	public String drDataIsEmpty(Doctor doctor) {
+
+		String emptyDataMsg = "";
+		String invalidDataMsg = "";
+		String validatorMsg=  "";
+
+		name = doctor.getName();
+		speciality = doctor.getSpeciality();
+		confee = doctor.getConfee();
+		contact = doctor.getContactNo();
+		address = doctor.getAddress();
+
+		// validate empty or not
+		if (name.isEmpty())
+			emptyDataMsg = emptyDataMsg + "name is empty!! please enter this requied fields\n";
+		if (speciality.isEmpty())
+			emptyDataMsg = emptyDataMsg + "speciality is empty!! please enter this requied fields\n";
+		if (confee.isEmpty())
+			emptyDataMsg = emptyDataMsg + "consulting fee is empty!! please enter this requied fields\n";
+		if (contact.isEmpty())
+			emptyDataMsg = emptyDataMsg + "contact is empty!! please enter this requied fields\n";
+		if (address.isEmpty())
+			emptyDataMsg = emptyDataMsg + "address is empty!! please enter this requied fields\n";
+
+		
+		invalidDataMsg = invalidDataMsg + dataTypeValidator(name,"invalid format for name\n");
+		invalidDataMsg = invalidDataMsg + dataTypeValidator(speciality,"invalid format for speciality\n");
+		invalidDataMsg = invalidDataMsg + dataTypeValidator(address,"invalid format for address\n");
+		
+		
+		validatorMsg = emptyDataMsg + invalidDataMsg;
+		
+		return validatorMsg;
+
+	}
+
+	
+	public String dataTypeValidator(String value, String msg) {
+		String errMsg = "";
+	
+		 
+		try {
+			String regxForName = "^[a-zA-Z \\s]{1,}[\\.]{0,1}[a-zA-Z0-9 \\s]{0,}$";
+			Pattern pattern = Pattern.compile(regxForName, Pattern.CASE_INSENSITIVE);
+			Matcher matcher = pattern.matcher(value);
+			boolean matchForName = matcher.find();
+			if (matchForName == false) {
+				errMsg = msg;
+			}
+
+		} catch (Exception exp) {
+			JOptionPane.showMessageDialog(null, errMsg);
+		}
+		System.out.println(errMsg);
+		return errMsg;
+	}
+	
+	
+	@Override
+	public void drDataTypeValidate(Doctor doctor) {
+
+		String invilidDataTypes = "";
+		name = doctor.getName();
+		speciality = doctor.getSpeciality();
+		confee = doctor.getConfee();
+		contact = doctor.getContactNo();
+		address = doctor.getAddress();
+
+		try {
+			String regxForName = "^[a-zA-Z \\s]{1,}[\\.]{0,1}[a-zA-Z0-9 \\s]{0,}$";
+			Pattern pattern = Pattern.compile(regxForName, Pattern.CASE_INSENSITIVE);
+			Matcher matcher = pattern.matcher(name);
+			boolean matchForName = matcher.find();
+			if (matchForName == false) {
+				invilidDataTypes = invilidDataTypes + "invalid name!";
+				JOptionPane.showMessageDialog(null, invilidDataTypes);
+			}
+
+		} catch (Exception exp) {
+			JOptionPane.showMessageDialog(null, "invalid name!");
+		}
+
+	}
+
+	@Override
+	public void addNewDoctor(Doctor newDoctor) {
+
+		// Create new Doctor in database
+		// 1. Verify doctor already exists or not.
+		// - If exists, throw exception. And go to Step 3.
+		// - Else, go to Step 2.
+		// 2. Save doctor
+		// 3. Done
+		DoctorRepository doctorRepository = new DoctorJDBCRepository();
+		doctorRepository.save(newDoctor);
+
+	}
+
+	// variable declaration
+	private String name;
+	private String speciality;
+	private String confee;
+	private String contact;
+	private String address;
+	// end
+
+}
